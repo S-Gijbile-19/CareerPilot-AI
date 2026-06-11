@@ -10,7 +10,8 @@ app.include_router(
 )
 
 @app.get("/")
-def root():
+def home():
     return {
-        "message": "CareerPilot API Running"
+        "message": "CareerPilot Backend Running"
     }
+    

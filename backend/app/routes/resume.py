@@ -9,5 +9,6 @@ async def upload_resume(file: UploadFile = File(...)):
     text = extract_text_from_pdf(file.file)
 
     return {
+        "success": True,
         "text": text
     }
