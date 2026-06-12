@@ -5,6 +5,7 @@ import { useState } from "react";
 export default function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
+  const [atsScore, setAtsScore] = useState<number | null>(null);
 
   const handleUpload = async () => {
     if (!file) {
@@ -29,6 +30,7 @@ export default function ResumePage() {
       console.log(data);
 
       setText(data.text);
+      setAtsScore(data.ats_score);
 
     } catch (error) {
       console.error(error);
@@ -57,6 +59,12 @@ export default function ResumePage() {
      >
       Upload
       </button>
+
+      {atsScore !== null && (
+        <div>
+          <h2>ATS Score: {atsScore}/100</h2>
+        </div>
+      )}
 
       <pre>
         {text}
