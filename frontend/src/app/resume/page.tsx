@@ -4,6 +4,38 @@ import { useState } from "react";
 
 export default function ResumePage() {
   const [file, setFile] = useState<File | null>(null);
+  const [text, setText] = useState("");
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/resume/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+
+      setText(data.text);
+
+    } catch (error) {
+      console.error(error);
+      alert("Upload failed");
+    }
+  };  
+
 
   return (
     <div>
@@ -13,26 +45,23 @@ export default function ResumePage() {
         type="file"
         accept=".pdf"
         onChange={(e) => {
-          console.log(e.target.files?.[0]);
-          setFile(e.target.files?.[0] || null);
+          const selectedFile = e.target.files?.[0] || null;
+          setFile(selectedFile);
         }}
       />
 
-      <button
+      <button 
         onClick={() => {
-          console.log("Clicked");
-          console.log("Current file:", file);
-
-          if (!file) {
-            alert("No file selected");
-            return;
-          }   
-
-          alert(`Selected: ${file.name}`);
-        }}
-      >
-        Upload
+        handleUpload();
+      }}
+     >
+      Upload
       </button>
-    </div>
+
+      <pre>
+        {text}
+      </pre>
+  </div> 
   );
 }
+   

@@ -1,13 +1,24 @@
-import pdfplumber
+import fitz
 
 def extract_text_from_pdf(file):
+    pdf_bytes = file.read()
+
+    doc = fitz.open(
+        stream=pdf_bytes,
+        filetype="pdf"
+    )
+
     text = ""
 
-    with pdfplumber.open(file) as pdf:
-        for page in pdf.pages:
-            page_text = page.extract_text()
+    print("Pages:", len(doc))
 
-            if page_text:
-                text += page_text + "\n"
+    for page in doc:
+        page_text = page.get_text()
+
+        print("Page text length:", len(page_text))
+
+        text += page_text
+
+    print("Total text length:", len(text))
 
     return text
