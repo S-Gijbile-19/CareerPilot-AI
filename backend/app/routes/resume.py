@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File
 from app.services.resume_parser import extract_text_from_pdf
 from app.services.ats_analyzer import calculate_ats_score
 from app.services.skill_gap import analyze_skill_gap
+from app.services.recommendations import generate_recommendations
 router = APIRouter()
 
 @router.post("/upload")
@@ -11,17 +12,20 @@ async def upload_resume(file: UploadFile = File(...)):
 
     ats_score = calculate_ats_score(text)
 
+    skill_gap = analyze_skill_gap(
+        text,
+        "Data Analyst"
+    )
+
+    recommendations = generate_recommendations(
+        skill_gap["missing"]
+    )
+
     return {
         "success": True,
         "text": text,
-        "ats_score": ats_score
-    }
-    
-    skill_gap = analyze_skill_gap(
-    text,
-    "Data Analyst"
-)
-    return {
+        "ats_score": ats_score,
         "found_skills": skill_gap["found"],
-        "missing_skills": skill_gap["missing"]
+        "missing_skills": skill_gap["missing"],
+        "recommendations": recommendations
     }
