@@ -309,6 +309,30 @@ export default function ResumePage() {
               </div>
             )}
 
+            {/* Autonomous Interview Agent Widget */}
+<div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl mt-8">
+  <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+    <div>
+      <h3 className="text-lg font-bold text-slate-200">Interactive Interview Simulator Agent</h3>
+      <p className="text-xs text-slate-400">Contextual behavior-driven stress tests customized against your resume profile skills.</p>
+    </div>
+    <button
+      onClick={async () => {
+        const res = await fetch("http://127.0.0.1:8000/api/resume/interview/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data.found_skills)
+        });
+        const qData = await res.json();
+        alert(`[Agent Interview Question for ${qData.skill}]:\n\n${qData.question}`);
+      }}
+      className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition"
+    >
+      Initialize Mock Session
+    </button>
+  </div>
+</div>
+
             {/* Zero Slate Placeholder Prompt */}
             {!data && !loading && (
               <div className="bg-slate-900/50 border border-slate-800 border-dashed rounded-2xl p-12 text-center text-slate-500">
