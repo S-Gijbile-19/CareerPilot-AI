@@ -3,7 +3,7 @@ from app.services.resume_parser import extract_text_from_pdf
 from app.services.ats_analyzer import calculate_ats_score
 from app.services.skill_gap import analyze_skill_gap
 from app.services.recommendations import generate_recommendations
-from app.services.interview_bot import InterviewAgent  # <--- Fixes the 'not defined' error!
+from app.services.interview_bot import InterviewAgent
 from typing import Optional, List
 import logging
 from app.services.job_monitor import fetch_live_job_deadlines
@@ -90,10 +90,14 @@ async def evaluate_interview_response(answer: str = Form(...), skill: str = Form
     except Exception as e:
         logger.error(f"Interview Agent error on evaluation loop: {str(e)}")
         raise HTTPException(status_code=500, detail="Critique calculation thread encountered a boundary exception.")
-    
 
-
-    @router.get("/alerts")
-    async def get_alerts():
-    # This route is now "live" and ready for frontend polling
-     return await fetch_live_job_deadlines()
+@router.get("/alerts")
+async def get_alerts():
+    """
+    This route is now live, properly indented, and ready for frontend polling.
+    """
+    try:
+        return await fetch_live_job_deadlines()
+    except Exception as e:
+        logger.error(f"Alerts background lookup error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch job alert matrices.")
