@@ -6,6 +6,7 @@ from app.services.recommendations import generate_recommendations
 from app.services.interview_bot import InterviewAgent  # <--- Fixes the 'not defined' error!
 from typing import Optional, List
 import logging
+from app.services.job_monitor import fetch_live_job_deadlines
 
 # Set up logging for agent monitoring terminal visibility during demos
 logging.basicConfig(level=logging.INFO)
@@ -89,3 +90,10 @@ async def evaluate_interview_response(answer: str = Form(...), skill: str = Form
     except Exception as e:
         logger.error(f"Interview Agent error on evaluation loop: {str(e)}")
         raise HTTPException(status_code=500, detail="Critique calculation thread encountered a boundary exception.")
+    
+
+
+    @router.get("/alerts")
+    async def get_alerts():
+    # This route is now "live" and ready for frontend polling
+     return await fetch_live_job_deadlines()
