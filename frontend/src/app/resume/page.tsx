@@ -78,7 +78,7 @@ export default function ResumePage() {
               <option>Data Analyst</option>
             </select>
             <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} className="w-full bg-slate-50 p-3 border border-slate-200 rounded-lg" placeholder="Job Description (Optional)..." rows={4} />
-            <button onClick={handleUpload} disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700">
+            <button onClick={handleUpload} disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 cursor-pointer">
               {loading ? "Orchestrating..." : "Execute Agent Loop"}
             </button>
           </div>
@@ -89,7 +89,7 @@ export default function ResumePage() {
             
             {/* Alerts */}
             {alerts.length > 0 && alerts.map((a: any) => (
-              <div key={a.company} className="bg-red-500 p-4 rounded-xl text-white font-bold animate-pulse">
+              <div key={a.company} className="bg-red-500 p-4 rounded-xl text-white font-bold animate-pulse shadow-sm">
                 ⚠️ Urgent: {a.company} Registration Closing in {a.days_remaining} days!
               </div>
             ))}
@@ -98,14 +98,14 @@ export default function ResumePage() {
               <div className="space-y-6">
                 {/* Score */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                  <h2 className="text-5xl font-black text-blue-600">{data.ats_metrics.overall_score}%</h2>
+                  <h2 className="text-5xl font-black text-blue-600">{data.ats_metrics?.overall_score ?? 0}%</h2>
                   <p className="text-slate-500 font-medium">Overall ATS Match Score</p>
                 </div>
 
                 {/* Skills & Roadmap */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                    <h3 className="font-bold mb-4">Autonomous Learning Roadmap</h3>
-                   {data.recommendations.map((r: any) => (
+                   {data.recommendations?.map((r: any) => (
                      <div key={r.step} className="border-l-2 border-slate-200 pl-4 mb-4 py-1">
                         <p className="font-semibold text-slate-800">{r.skill}</p>
                         <p className="text-sm text-slate-600">{r.action}</p>
@@ -118,12 +118,14 @@ export default function ResumePage() {
                      <p className="text-xs text-slate-500 mb-4">Contextual stress tests based on your profile.</p>
                      <button onClick={async () => {
                        const res = await fetch("http://127.0.0.1:8000/api/resume/interview/ask", {
-                         method: "POST", headers: { "Content-Type": "application/json" },
-                         body: JSON.stringify({ skills: data.found_skills })
+                         method: "POST", 
+                         headers: { "Content-Type": "application/json" },
+                         // FIX: Pass the array directly without wrapping it in an object key
+                         body: JSON.stringify(data.found_skills || [])
                        });
                        const q = await res.json();
                        alert(`[Agent Interview Question]:\n\n${q.question}`);
-                     }} className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-700">
+                     }} className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-700 cursor-pointer">
                        Initialize Mock Session
                      </button>
                    </div>
